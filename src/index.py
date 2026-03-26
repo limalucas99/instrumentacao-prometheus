@@ -5,12 +5,34 @@ from models.order import Order, OrderItem
 from models.product import Product
 from models.base import db
 from flask_migrate import Migrate, upgrade
+from prometheus_client import Info, generate_latest, CONTENT_TYPE_LATEST
 import random
+import sys
+import platform
 
 app = Flask(__name__,
             static_url_path='',
             static_folder='static',
             template_folder='templates')
+
+app_info = Info('ecommerce_app_info', "Pequeno ecommerce")
+
+app_info.info({
+    'version': '1.0.0',
+    'environment': 'dev',
+    'platform': platform.system(),
+    'python_version': platform.python_version(),
+})
+
+system_info = Info('ecommerce_system_info', "Informações do sistema")
+system_info.info({
+    'system_name': platform.system(),
+    'release': platform.release(),
+    'version': platform.version(),
+    'machine': platform.machine(),
+    'processor': platform.processor(),
+})
+
 
 app.secret_key = 'supersecretkey'  # Para manter a sessão
 
@@ -254,3 +276,7 @@ def index():
 if __name__ == '__main__':
     #apply_migrations()
     app.run(host='0.0.0.0', port=5000, debug=True)
+
+@app.route('/metrics')
+def metrics():
+    return generate_latest(), 200, {'Content-Type': CONTENT_TYPE_LATEST}
