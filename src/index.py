@@ -9,7 +9,7 @@ from prometheus_client import Info, generate_latest, CONTENT_TYPE_LATEST
 import random
 import sys
 import platform
-from metrics import cart_addition_total, errors_total
+from metrics import cart_addition_total, errors_total, active_sessions_gauge, cpu_usage_gauge, update_cpu_usage, update_active_sessions
 
 app = Flask(__name__,
             static_url_path='',
@@ -290,4 +290,10 @@ if __name__ == '__main__':
 
 @app.route('/metrics')
 def metrics():
+    try:
+        update_active_sessions()
+        update_cpu_usage()
+        print("Metrics atualizadas com sucesso")
+    except Exception as e:
+        print(f"Erro ao atualizar metrics: {str(e)}")
     return generate_latest(), 200, {'Content-Type': CONTENT_TYPE_LATEST}
