@@ -1,4 +1,4 @@
-from prometheus_client import Counter, Gauge
+from prometheus_client import Counter, Gauge, Histogram
 import psutil
 
 cart_addition_total = Counter('eccomerce_cart_addition_total',
@@ -31,3 +31,12 @@ def update_active_sessions():
         print(f"Atualização de sessões: {active_count} sessões ativas")
     except Exception as e:
         print(f"Erro ao atualizar sessões ativas: {str(e)}")
+
+
+request_duration_histogram = Histogram(
+    'ecommerce_request_duration_seconds',
+    'Tempo de resposta das requisições HTTP em segundos',
+    ['method', 'endpoint', 'status_code'],
+    buckets=(0.01, 0.025, 0.05, 0.1, 0.25, 0.5, 1.0, 2.5, 5.0, 10.0)
+)
+
