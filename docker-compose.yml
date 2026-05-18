@@ -30,5 +30,14 @@ services:
       - postgres_data:/var/lib/postgresql/data
     restart: unless-stopped
 
+  postgres-exporter:
+    image: quay.io/prometheuscommunity/postgres-exporter
+    ports:
+      - "9187:9187"
+    environment:
+      - DATA_SOURCE_URI=postgres:5432/ecommerce?sslmode=disable
+      - DATA_SOURCE_USER=ecommerce
+      - DATA_SOURCE_PASS=Pg1234
+
 volumes:
   postgres_data:
